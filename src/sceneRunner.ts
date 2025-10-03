@@ -1,37 +1,12 @@
-import { AmbientLight, BoxGeometry, CameraHelper, DirectionalLight, DirectionalLightHelper, DoubleSide, Euler, Mesh, MeshStandardMaterial, Object3D, PerspectiveCamera, PlaneGeometry, Scene, WebGLRenderer } from "three";
+import { AmbientLight, Curve, DirectionalLight, DoubleSide, Mesh, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, Scene, TubeGeometry, Vector3, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
-import { create } from "zustand";
-import { throttle } from "lodash";
-import type { SceneState } from "three/src/renderers/common/RendererUtils.js";
+import type { PhlysicsScene } from "./PhlysicsScene";
+import { createSpring } from "./Spring";
 
 const width = 800;
 const height = 600;
 
-export interface PhlysicsScene {
-    variables: Record<string, unknown>;
-    constants: Record<string, unknown>;
-    bodies: Object3D[];
-    setup: (scene: Scene) => void;
-    update: (d: number) => void;
-    useStore: <T>(selector: (state: Record<string, unknown>) => T) => T;
-}
-
-export function createSceneStore<T extends Record<string, any>>(initial: T) {
-    const useStore = create<
-        T & { setConstant: <K extends keyof T>(key: K, value: T[K]) => void }
-    >((set) => ({
-        ...initial,
-        setConstant: <K extends keyof T>(key: K, value: T[K]) =>
-            set((state) => ({
-                ...state,
-                [key]: value,
-            })),
-    }));
-
-    return useStore;
-}
-
-export function runScene(el: HTMLElement, s: PhlysicsScene) {
+export function runScene(el: HTMLElement, s: PhlysicsScene<{}, {}>) {
     const scene = new Scene();
     const renderer = new WebGLRenderer({ alpha: true, antialias: true });
     renderer.shadowMap.enabled = true;
@@ -69,7 +44,8 @@ export function runScene(el: HTMLElement, s: PhlysicsScene) {
 
     let lastTime = 0;
     renderer.setAnimationLoop((currentTime) => {
-        const d = (currentTime - lastTime) / 1000;
+        let d = (currentTime - lastTime) / 1000;
+        // spring.material.uniforms.uStretch.value = 3.0 + Math.sin(currentTime) * 2.0; // oscillates between 1 and 5
         lastTime = currentTime;
         controls.update();
         renderer.render(scene, camera);

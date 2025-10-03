@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react'
 import './App.css'
-import { runScene, type PhlysicsScene } from './sceneRunner'
+import { runScene } from './sceneRunner'
 import { Scene1 } from './Scene1';
+import type { PhlysicsScene } from './PhlysicsScene';
 
 function App() {
   const rendererRef = useRef<HTMLDivElement>(null);
-  const scene: PhlysicsScene = new Scene1();
+  const scene: PhlysicsScene<{}, {}> = new Scene1();
 
   useEffect(() => {
     let destroyer;
@@ -25,6 +26,7 @@ function App() {
             useStore={scene.useStore}
           />
         ))}
+        <div><button onClick={() => scene.reset()}>reset</button></div>
       </div>
       <div ref={rendererRef}></div>
     </div>
