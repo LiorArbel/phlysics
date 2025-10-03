@@ -1,28 +1,48 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import './App.css'
-import { initializeScene, useSceneStore } from './scene1'
-
+import { runScene, type PhlysicsScene } from './sceneRunner'
+import { Scene1 } from './Scene1';
 
 function App() {
   const rendererRef = useRef<HTMLDivElement>(null);
-  const { cameraTargetPos } = useSceneStore();
+  const scene: PhlysicsScene = new Scene1();
 
   useEffect(() => {
     let destroyer;
     if (rendererRef.current) {
-      destroyer = initializeScene(rendererRef.current);
+      destroyer = runScene(rendererRef.current, scene);
     }
     return destroyer
-  }, [initializeScene]);
+  }, [runScene, scene]);
 
   return (
     <div>
       <div>
-        <span>{cameraTargetPos.x}</span>
+        {Object.keys(scene.constants).map(k => (
+          <SceneControl
+            key={k}
+            name={k}
+            useStore={scene.useStore}
+          />
+        ))}
       </div>
       <div ref={rendererRef}></div>
     </div>
   )
+}
+
+function SceneControl({ name, useStore }: { name: string, useStore: any }) {
+  const value = useStore((s: any) => s[name]);
+  const setConstant = useStore((s: any) => s.setConstant);
+
+  return <div>
+    <span>{name}</span>
+    <input
+      type='number'
+      value={value}
+      onChange={(e) => setConstant(name, Number(e.target.value))}
+    />
+  </div>
 }
 
 export default App
