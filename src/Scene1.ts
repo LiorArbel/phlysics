@@ -32,7 +32,7 @@ export class Scene1 extends PhlysicsScene<Scene1Props, Scene1Variables> {
         );
 
         const geo = new BoxGeometry(1, 1, 1);
-        const material = new MeshStandardMaterial({ color: "rgba(250, 227, 134, 1)" });
+        const material = new MeshStandardMaterial({ color: "rgba(197, 0, 247, 1)" });
         for (let i = 0; i < 5; i++) {
             const cube = new Mesh(geo, material);
             cube.castShadow = true;

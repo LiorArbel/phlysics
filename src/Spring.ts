@@ -34,5 +34,12 @@ export const createSpring = (height: number, segments: number, width: number, li
     const geometry = new BufferGeometry().setFromPoints(points);
     const material = new LineBasicMaterial({ color: 0x0077ff, linewidth });
     const zigzagSpring = new Line(geometry, material);
-    return zigzagSpring
+
+    const fromTo = (from: Vector3, to: Vector3) => {
+        zigzagSpring.position.copy(from);
+        zigzagSpring.lookAt(to);
+        const dist = new Vector3().subVectors(to, from).length();
+        zigzagSpring.scale.z = dist / height;
+    }
+    return { obj: zigzagSpring, fromTo }
 }

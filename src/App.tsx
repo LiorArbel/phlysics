@@ -1,12 +1,14 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import { runScene } from './sceneRunner'
 import { Scene1 } from './Scene1';
-import type { PhlysicsScene } from './PhlysicsScene';
+import { PhlysicsScene } from './PhlysicsScene';
+import { SceneGravitySpring } from './scenes/SceneGravitySpring';
 
 function App() {
   const rendererRef = useRef<HTMLDivElement>(null);
-  const scene: PhlysicsScene<{}, {}> = new Scene1();
+  // const scene: PhlysicsScene<{}, {}> = new Scene1();
+  const [scene, setScene] = useState<PhlysicsScene<{}, {}>>(new SceneGravitySpring());
 
   useEffect(() => {
     let destroyer;
@@ -27,9 +29,13 @@ function App() {
           />
         ))}
         <div><button onClick={() => scene.reset()}>reset</button></div>
+        <div>
+          <button onClick={() => setScene(new Scene1())}>Spring with different solvers</button>
+          <button onClick={() => setScene(new SceneGravitySpring())}>spring with gravity</button>
+        </div>
       </div>
       <div ref={rendererRef}></div>
-    </div>
+    </div >
   )
 }
 
