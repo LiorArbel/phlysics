@@ -48,6 +48,7 @@ export class SceneGravitySpring extends PhlysicsScene<SceneSpringConsts, SceneSp
         cube.position.set(2, 0, 3);
 
         this.snapshotBodies([this.cube]);
+        this.bodies = [this.cube, this.spring];
     }
 
     setup(scene: Scene) {

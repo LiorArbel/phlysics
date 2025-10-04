@@ -41,7 +41,7 @@ export class Scene1 extends PhlysicsScene<Scene1Props, Scene1Variables> {
             cube.position.y = 0.5;
             this.cubes[i] = cube;
 
-            const spring = createSpring(1, 10, 0.5, 10);
+            const { obj: spring } = createSpring(1, 10, 0.5, 10);
             spring.position.copy(cube.position)
             // spring.rotateZ(-Math.PI / 2);
             // spring.rotateX(Math.PI / 2);
@@ -52,6 +52,7 @@ export class Scene1 extends PhlysicsScene<Scene1Props, Scene1Variables> {
 
 
         this.snapshotBodies(this.cubes);
+        this.bodies = [...this.springs, ...this.cubes];
     }
 
     setup(scene: Scene) {

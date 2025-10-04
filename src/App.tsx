@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
-import { runScene } from './sceneRunner'
+import { Renderer, runScene } from './sceneRunner'
 import { Scene1 } from './Scene1';
 import { PhlysicsScene } from './PhlysicsScene';
 import { SceneGravitySpring } from './scenes/SceneGravitySpring';
+
+const r = new Renderer();
 
 function App() {
   const rendererRef = useRef<HTMLDivElement>(null);
@@ -11,16 +13,30 @@ function App() {
   const [scene, setScene] = useState<PhlysicsScene<{}, {}>>(new SceneGravitySpring());
 
   useEffect(() => {
-    let destroyer;
     if (rendererRef.current) {
-      destroyer = runScene(rendererRef.current, scene);
+      console.log("attaching");
+      r.attach(rendererRef.current);
     }
-    return destroyer
-  }, [runScene, scene]);
+    return () => {
+      if (rendererRef.current) {
+        r.detach(rendererRef.current)
+      }
+    }
+  }, [Renderer, rendererRef]);
+
+  useEffect(() => {
+    r.loadPhlysics(scene);
+  }, [scene]);
 
   return (
     <div>
       <div>
+        <button onClick={() => setScene(new Scene1())}>Spring with different solvers</button>
+        <button onClick={() => setScene(new SceneGravitySpring())}>spring with gravity</button>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center' }} ref={rendererRef}></div>
+      <div><button onClick={() => scene.reset()}>reset</button></div>
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '2em' }}>
         {Object.keys(scene.constants).map(k => (
           <SceneControl
             key={k}
@@ -28,13 +44,7 @@ function App() {
             useStore={scene.useStore}
           />
         ))}
-        <div><button onClick={() => scene.reset()}>reset</button></div>
-        <div>
-          <button onClick={() => setScene(new Scene1())}>Spring with different solvers</button>
-          <button onClick={() => setScene(new SceneGravitySpring())}>spring with gravity</button>
-        </div>
       </div>
-      <div ref={rendererRef}></div>
     </div >
   )
 }
@@ -43,12 +53,13 @@ function SceneControl({ name, useStore }: { name: string, useStore: any }) {
   const value = useStore((s: any) => s[name]);
   const setConstant = useStore((s: any) => s.setConstant);
 
-  return <div>
+  return <div style={{ display: 'flex', flexDirection: 'row', gap: '1em' }}>
     <span>{name}</span>
     <input
       type='number'
-      value={value}
+      value={Number.isFinite(value) ? value : 0}
       onChange={(e) => setConstant(name, Number(e.target.value))}
+      style={{ width: '6em' }}
     />
   </div>
 }
