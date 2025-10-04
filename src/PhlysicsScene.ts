@@ -1,7 +1,7 @@
 import { Object3D, Scene } from "three";
 import { create } from "zustand";
 
-export abstract class PhlysicsScene<C extends {}, V extends {}> {
+export abstract class PhlysicsScene<C extends {}, V> {
     variables: V;
     constants: C;
     bodies: Object3D[] = [];

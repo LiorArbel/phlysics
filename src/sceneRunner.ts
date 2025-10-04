@@ -1,4 +1,4 @@
-import { AmbientLight, Curve, DirectionalLight, DoubleSide, Mesh, MeshStandardMaterial, PerspectiveCamera, PlaneGeometry, Scene, TubeGeometry, Vector3, WebGLRenderer } from "three";
+import { AmbientLight, CameraHelper, Curve, DirectionalLight, DoubleSide, Mesh, MeshStandardMaterial, OrthographicCamera, PerspectiveCamera, PlaneGeometry, Scene, TubeGeometry, Vector3, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import type { PhlysicsScene } from "./PhlysicsScene";
 import { createSpring } from "./Spring";
@@ -17,11 +17,14 @@ export function runScene(el: HTMLElement, s: PhlysicsScene<{}, {}>) {
     const ground = addGround(scene);
 
     const camera = new PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.z = 10;
-    camera.position.y = 5;
+    // const camera = new OrthographicCamera(-width / height, width / height, 1);
+    camera.zoom = 0.2;
+    camera.position.z = 2;
+    camera.position.y = 10;
     const controls = new OrbitControls(camera, el);
     controls.enableDamping = true;
     controls.target.set(0, 0, 0);
+    controls.update();
 
     {
         const color = "rgba(255, 244, 179, 1)";
@@ -29,13 +32,20 @@ export function runScene(el: HTMLElement, s: PhlysicsScene<{}, {}>) {
         const light = new DirectionalLight(color, intensity);
         light.position.set(0, 10, 0);
         light.target.position.set(-5, -5, -2);
-        // light.castShadow = true;
+        light.castShadow = true;
         scene.add(light);
         scene.add(light.target);
         // const helper = new DirectionalLightHelper(light);
         // scene.add(helper);
         // const cameraHelper = new CameraHelper(light.shadow.camera);
         // scene.add(cameraHelper);
+        {
+            const size = 10;
+            light.shadow.camera.left = -size;
+            light.shadow.camera.right = size;
+            light.shadow.camera.top = size;
+            light.shadow.camera.bottom = -size;
+        }
 
         scene.add(new AmbientLight(color, 0.2));
     }
