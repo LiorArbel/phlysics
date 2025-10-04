@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
-import { Renderer, runScene } from './sceneRunner'
+import { PhlysicsRenderer } from './PhlysicsRenderer'
 import { Scene1 } from './Scene1';
 import { PhlysicsScene } from './PhlysicsScene';
 import { SceneGravitySpring } from './scenes/SceneGravitySpring';
 
-const r = new Renderer();
+const r = new PhlysicsRenderer();
 
 function App() {
   const rendererRef = useRef<HTMLDivElement>(null);
   // const scene: PhlysicsScene<{}, {}> = new Scene1();
-  const [scene, setScene] = useState<PhlysicsScene<{}, {}>>(new SceneGravitySpring());
+  const [scene, setScene] = useState<PhlysicsScene<{}, {}>>(new Scene1());
 
   useEffect(() => {
     if (rendererRef.current) {
@@ -22,7 +22,7 @@ function App() {
         r.detach(rendererRef.current)
       }
     }
-  }, [Renderer, rendererRef]);
+  }, [PhlysicsRenderer, rendererRef]);
 
   useEffect(() => {
     r.loadPhlysics(scene);

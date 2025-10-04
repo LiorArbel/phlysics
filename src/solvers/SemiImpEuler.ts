@@ -10,7 +10,7 @@ export class SemiImplicitEuler extends Solver {
         this.state[1] = this.state[1] + d * this.f(this.state)[1];
 
         // Then X
-        this.state[0] = this.state[0] + d * this.f(this.state)[0];
+        this.state[0] = this.state[0] + d * this.state[1];
     }
 
 }
